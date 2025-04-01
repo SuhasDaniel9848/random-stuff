@@ -1,0 +1,21 @@
+from flask import Flask, render_template
+import pandas as pd
+
+app = Flask(__name__)
+
+# Load the dataset
+dataframe_cleaned = pd.read_csv(r'C:\Users\suhas\OneDrive\Desktop\PROPGROWTHX AI PROJECT TRIAL\cleaned_data_with_predictions.csv')
+
+@app.route('/')
+def home():
+    top_properties = dataframe_cleaned.nlargest(10, 'PRICE_DIFFERENCE')[[
+        'ADDRESS', 'SUBLOCALITY', 'PRICE', 'PREDICTED_PRICE', 'PRICE_DIFFERENCE',
+        'PROPERTYSQFT', 'BEDS', 'BATH'
+    ]].to_dict(orient='records')
+
+    top_neighborhoods = dataframe_cleaned.groupby('SUBLOCALITY')['PRICE_DIFFERENCE'].mean().sort_values(ascending=False).head(5).to_dict()
+
+    return render_template('index.html', top_properties=top_properties, top_neighborhoods=top_neighborhoods)
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head><title>Property Analysis</title></head>
+<body>
+    <h1>Property Dashboard</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <h2>Top 10 Potentially Undervalued Properties</h2>
+    {% if top_properties %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Address</th>
+                    <th>Sublocality</th>
+                    <th>Price</th>
+                    <th>Predicted Price</th>
+                    <th>Difference</th>
+                    <th>SqFt</th>
+                    <th>Beds</th>
+                    <th>Baths</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prop in top_properties %}
+                <tr>
+                    <td>{{ prop.get('ADDRESS', 'N/A') }}</td>
+                    <td>{{ prop.get('SUBLOCALITY', 'N/A') }}</td>
+                    <td>{{ prop.get('PRICE', 'N/A') }}</td>
+                    <td>{{ prop.get('PREDICTED_PRICE', 'N/A') }}</td>
+                    <td>{{ prop.get('PRICE_DIFFERENCE', 'N/A') }}</td>
+                    <td>{{ prop.get('PROPERTYSQFT', 'N/A') }}</td>
+                    <td>{{ prop.get('BEDS', 'N/A') }}</td>
+                    <td>{{ prop.get('BATH', 'N/A') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No top property data available.</p>
+    {% endif %}
+
+    <h2>Top 5 Neighborhoods by Avg. Price Difference</h2>
+    {% if top_neighborhoods %}
+        <ul>
+            {% for neighborhood, avg_diff in top_neighborhoods.items() %}
+            <li>{{ neighborhood }}: {{ "%.2f"|format(avg_diff) }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No top neighborhood data available.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('reload_data_route') }}">Reload Data</a></p>
+</body>
+</html>
